@@ -8,6 +8,9 @@ class LidarPoint:
     def add_neighbor(self, neighbor):
         self.neighbors.add(neighbor)
 
+    def add_opening_pair(self, point):
+        self.opening_pair = point
+
     def __repr__(self):
         p = (int(self.x), int(self.y))
         return str(p)
