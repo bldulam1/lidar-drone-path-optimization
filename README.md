@@ -39,5 +39,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](./LICENSE.
 ## Acknowledgments
 
 * Dijkstra Algorithm [video](https://www.youtube.com/watch?v=gdmfOwyQlcI&t=229s)
-* Inspiration
-* etc
