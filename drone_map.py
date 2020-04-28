@@ -50,7 +50,7 @@ class DroneMap:
                         next_row_header = i + int(cf_row['distance']) + 1
                     else:
                         theta, r = cf_row['angle'], cf_row['distance']
-                        theta = math.radians(float(theta))
+                        theta = -math.radians(float(theta))
                         curr_x = float(r) * math.cos(theta) + pos_x
                         curr_y = float(r) * math.sin(theta) + pos_y
                         x.append(curr_x)
