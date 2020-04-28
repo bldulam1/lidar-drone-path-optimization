@@ -4,6 +4,9 @@ import math
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from lidar_point import LidarPoint
+from wall_corner import WallCorner
+
 
 class DroneMap:
     def __init__(self, lidar_points_csv: str, flight_path_csv: str):
@@ -15,6 +18,7 @@ class DroneMap:
         self.drone_positions = None
         self.points = None
         self.corners = None
+        self.walls = None
 
     def get_drone_positions(self) -> pd.DataFrame:
         if self.drone_positions is None:
@@ -149,6 +153,96 @@ class DroneMap:
             self.get_all_corners().plot(kind='scatter', x='x', y='y', color='k', ax=self.ax)
         plt.show()
 
+    def get_walls(self, div=100):
+        if self.walls is None:
+            half_div = div / 2
+            df_points = self.get_all_points().copy()
+            walls = {}
+            for _, corner in self.get_all_corners().iterrows():
+                corner = LidarPoint(corner.x, corner.y)
+                df = self.get_all_corners().copy()
+                df['r'] = df.apply(lambda row: ((row.x - corner.x) ** 2 + (row.y - corner.y) ** 2) ** 0.5, axis=1)
+                top_corner = df[(df.y > corner.y) & (abs(df.x - corner.x) < div)].sort_values(by='r')[:1]
+                down_corner = df[(df.y < corner.y) & (abs(df.x - corner.x) < div)].sort_values(by='r')[:1]
+                left_corner = df[(df.x < corner.x) & (abs(df.y - corner.y) < div)].sort_values(by='r')[:1]
+                right_corner = df[(df.x > corner.x) & (abs(df.y - corner.y) < div)].sort_values(by='r')[:1]
+
+                if len(top_corner) and len(down_corner):
+                    top_corner = LidarPoint(top_corner.iloc[0].x, top_corner.iloc[0].y)
+                    down_corner = LidarPoint(down_corner.iloc[0].x, down_corner.iloc[0].y)
+
+                    top_pts = df_points[
+                        (df_points.y < top_corner.y - half_div) &
+                        (df_points.y > corner.y + half_div) &
+                        (abs(df_points.x - corner.x) < div)
+                        ]
+
+                    down_pts = df_points[
+                        (df_points.y < corner.y - half_div) &
+                        (df_points.y > down_corner.y + half_div) &
+                        (abs(df_points.x - corner.x) < div)
+                        ]
+
+                    if len(top_pts) > len(down_pts):
+                        v_corner = LidarPoint(top_corner.x, top_corner.y)
+                    else:
+                        v_corner = LidarPoint(down_corner.x, down_corner.y)
+                elif len(top_corner):
+                    v_corner = LidarPoint(top_corner.iloc[0].x, top_corner.iloc[0].y)
+                else:
+                    v_corner = LidarPoint(down_corner.iloc[0].x, down_corner.iloc[0].y)
+
+                if len(right_corner) and len(left_corner):
+                    right_corner = LidarPoint(right_corner.iloc[0].x, right_corner.iloc[0].y)
+                    left_corner = LidarPoint(left_corner.iloc[0].x, left_corner.iloc[0].y)
+
+                    right_pts = df_points[
+                        (df_points.x < right_corner.x - half_div) &
+                        (df_points.x > corner.x + half_div) &
+                        (abs(df_points.y - corner.y) < div)
+                        ]
+
+                    left_pts = df_points[
+                        (df_points.x < corner.x - half_div) &
+                        (df_points.x > left_corner.x + half_div) &
+                        (abs(df_points.y - corner.y) < div)
+                        ]
+
+                    if len(right_pts) > len(left_pts):
+                        h_corner = LidarPoint(right_corner.x, right_corner.y)
+                    else:
+                        h_corner = LidarPoint(left_corner.x, left_corner.y)
+                elif not len(right_corner):
+                    h_corner = LidarPoint(left_corner.iloc[0].x, left_corner.iloc[0].y)
+                else:
+                    h_corner = LidarPoint(right_corner.iloc[0].x, right_corner.iloc[0].y)
+
+                wall_corner = WallCorner(cc=corner, cv=v_corner, ch=h_corner)
+                w = wall_corner.get_walls()
+                if w[0].__str__() not in walls:
+                    walls[w[0].__str__()] = w[0]
+                if w[1].__str__() not in walls:
+                    walls[w[1].__str__()] = w[1]
+
+            x_start, y_start = [], []
+            x_end, y_end = [], []
+            for wl in walls:
+                x_start.append(walls[wl].start.x)
+                y_start.append(walls[wl].start.y)
+                x_end.append(walls[wl].end.x)
+                y_end.append(walls[wl].end.y)
+
+            self.walls = pd.DataFrame(
+                data=list(zip(x_start, y_start, x_end, y_end)),
+                columns=['xstart', 'ystart', 'xend', 'yend']
+            ).sort_values(
+                by=['xstart', 'ystart', 'xend', 'yend']
+            ).drop_duplicates().reset_index(
+                drop=True
+            ).astype(int)
+
+        return self.walls
+
 
 if __name__ == '__main__':
     dm = DroneMap(
@@ -156,4 +250,5 @@ if __name__ == '__main__':
         flight_path_csv='./.cache/FlightPath.csv'
     )
 
-    dm.visualize_lidar_points(by_scan_id=False)
+    # dm.visualize_lidar_points(by_scan_id=False)
+    print(dm.get_walls())
