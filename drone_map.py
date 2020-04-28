@@ -304,6 +304,29 @@ class DroneMap:
 
         return self.wall_openings
 
+    def get_nodes(self, start: LidarPoint, end: LidarPoint) -> List[LidarPoint]:
+        nodes = [start, end]
+
+        wall_openings = self.get_wall_openings()
+        for wo in wall_openings:
+            wo_v = wo.get_mid_points()
+            wo1, wo2 = wo_v.start, wo_v.end
+
+            wo1.add_opening_pair(wo2)
+            wo2.add_opening_pair(wo1)
+
+            nodes += [wo1, wo2]
+
+        for i in range(len(nodes)):
+            for j in range(len(nodes)):
+                if i == j:
+                    continue
+                if self.is_connected(nodes[i], nodes[j]):
+                    nodes[i].add_neighbor(nodes[j])
+                    nodes[j].add_neighbor(nodes[i])
+
+        return nodes
+
 
 if __name__ == '__main__':
     dm = DroneMap(
@@ -326,4 +349,6 @@ if __name__ == '__main__':
     """Get Wall Openings"""
     # print(dm.get_wall_openings())
 
-    """"""
+    """Get nodes of each room"""
+    # nodes = dm.get_nodes(start=LidarPoint(7.5e3, 8e3), end=LidarPoint(17.5e3, 8e3))
+    # print(nodes)
