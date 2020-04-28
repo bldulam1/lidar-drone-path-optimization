@@ -6,7 +6,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from lidar_point import LidarPoint
+from lidar_vector import LidarVector
 from wall_corner import WallCorner
+from wall_distance import get_distance_from_nearest_wall
 
 
 class DroneMap:
@@ -250,6 +252,16 @@ class DroneMap:
             os.makedirs(output_dir)
         self.get_walls().astype(int).to_csv(csv_file, index=False, header=False)
 
+    def is_connected(self, p1: LidarPoint, p2: LidarPoint) -> bool:
+        walls = self.get_walls()
+        lv = LidarVector(p1, p2)
+        wall_distance = get_distance_from_nearest_wall(
+            wall_candidates=walls,
+            pt=p1,
+            theta=math.degrees(lv.direction)
+        )
+        return wall_distance and (wall_distance >= lv.distance)
+
 
 if __name__ == '__main__':
     dm = DroneMap(
@@ -259,3 +271,9 @@ if __name__ == '__main__':
 
     # dm.visualize_lidar_points(by_scan_id=False)
     # dm.generate_mapping_csv(csv_file="./.cache/Mapping.csv")
+    lp1 = LidarPoint(5e3, 4e3)
+    lp2 = LidarPoint(15e3, 14e3)
+    assert not dm.is_connected(lp1, lp2), "{} {} should not be connected".format(lp1, lp2)
+    lp1 = LidarPoint(5e3, 4e3)
+    lp2 = LidarPoint(7.5e3, 8e3)
+    assert dm.is_connected(lp1, lp2), "{} {} should be connected".format(lp1, lp2)
