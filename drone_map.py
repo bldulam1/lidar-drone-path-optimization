@@ -1,6 +1,7 @@
 import csv
 import math
 import os
+from typing import List
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -9,6 +10,7 @@ from lidar_point import LidarPoint
 from lidar_vector import LidarVector
 from wall_corner import WallCorner
 from wall_distance import get_distance_from_nearest_wall
+from wall_opening import WallOpening
 
 
 class DroneMap:
@@ -22,6 +24,7 @@ class DroneMap:
         self.points = None
         self.corners = None
         self.walls = None
+        self.wall_openings = None
 
     def get_drone_positions(self) -> pd.DataFrame:
         if self.drone_positions is None:
@@ -262,6 +265,45 @@ class DroneMap:
         )
         return wall_distance and (wall_distance >= lv.distance)
 
+    def get_wall_openings(self, min_wall_length=500) -> List[WallOpening]:
+        if self.wall_openings is None:
+            # Get short walls, walls with length < min_wall_length
+            walls = self.get_walls().copy()
+            walls['length'] = ((walls.xstart - walls.xend) ** 2 + (walls.ystart - walls.yend) ** 2) ** 0.5
+            walls = walls[walls.length < min_wall_length]
+            walls['angle'] = walls.apply(
+                lambda row: math.degrees(math.atan2(row.yend - row.ystart, row.xend - row.xstart)),
+                axis=1)
+            self.wall_openings = []
+            walls_seen = set()
+            for _, wall1 in walls.iterrows():
+                w1 = LidarVector(
+                    start=LidarPoint(wall1.xstart, wall1.ystart),
+                    end=LidarPoint(wall1.xend, wall1.yend)
+                )
+
+                if w1.__str__() in walls_seen:
+                    continue
+                else:
+                    walls_seen.add(w1.__str__())
+                temp_walls = walls.copy()
+                temp_walls['distance'] = temp_walls.apply(
+                    lambda row: ((row.xstart - wall1.xstart) ** 2 + (row.ystart - wall1.ystart) ** 2) ** 0.5, axis=1)
+                temp_walls = temp_walls[temp_walls.distance > 0].sort_values(by='distance')
+                wall2 = temp_walls.iloc[0]
+
+                w2 = LidarVector(
+                    start=LidarPoint(wall2.xstart, wall2.ystart),
+                    end=LidarPoint(wall2.xend, wall2.yend)
+                )
+                if w2.__str__() in walls_seen:
+                    continue
+                else:
+                    walls_seen.add(w2.__str__())
+                self.wall_openings.append(WallOpening(wall1=w1, wall2=w2))
+
+        return self.wall_openings
+
 
 if __name__ == '__main__':
     dm = DroneMap(
@@ -269,11 +311,19 @@ if __name__ == '__main__':
         flight_path_csv='./.cache/FlightPath.csv'
     )
 
+    """Visualize Lidar points"""
     # dm.visualize_lidar_points(by_scan_id=False)
     # dm.generate_mapping_csv(csv_file="./.cache/Mapping.csv")
-    lp1 = LidarPoint(5e3, 4e3)
-    lp2 = LidarPoint(15e3, 14e3)
-    assert not dm.is_connected(lp1, lp2), "{} {} should not be connected".format(lp1, lp2)
-    lp1 = LidarPoint(5e3, 4e3)
-    lp2 = LidarPoint(7.5e3, 8e3)
-    assert dm.is_connected(lp1, lp2), "{} {} should be connected".format(lp1, lp2)
+
+    """Test for connectivity between two points"""
+    # lp1 = LidarPoint(5e3, 4e3)
+    # lp2 = LidarPoint(15e3, 14e3)
+    # assert not dm.is_connected(lp1, lp2), "{} {} should not be connected".format(lp1, lp2)
+    # lp1 = LidarPoint(5e3, 4e3)
+    # lp2 = LidarPoint(7.5e3, 8e3)
+    # assert dm.is_connected(lp1, lp2), "{} {} should be connected".format(lp1, lp2)
+
+    """Get Wall Openings"""
+    # print(dm.get_wall_openings())
+
+    """"""
