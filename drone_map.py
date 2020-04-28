@@ -14,6 +14,7 @@ class DroneMap:
 
         self.drone_positions = None
         self.points = None
+        self.corners = None
 
     def get_drone_positions(self) -> pd.DataFrame:
         if self.drone_positions is None:
@@ -66,11 +67,71 @@ class DroneMap:
 
         return self.points
 
+    def get_all_corners(self):
+        if self.corners is None:
+            df = self.get_all_points().copy()
+            div = 100
+            min_pts = 40
+            max_radius = 1
+            df['x1'], df['y1'] = df.x // div, df.y // div
+            can_cor_x, can_cor_y = [], []
+
+            for x in df.x1.unique():
+                f_x = df[df.x1 == x]
+                if len(f_x) < min_pts:
+                    continue
+                for y in f_x.y1.unique():
+                    f_y = df[df.y1 == y]
+                    if len(f_y) < min_pts:
+                        continue
+                    f_xy = f_y[f_y.x1 == x]
+
+                    df_v = df[(df.x1 == x) & (abs(df.y1 - y) <= max_radius) & (df.y1 != y)]
+                    df_h = df[(abs(df.x1 - x) <= max_radius) & (df.y1 == y) & (df.x1 != x)]
+                    has_vertical, has_horizontal = len(df_v) > 0, len(df_h) > 0
+
+                    # print(has_vertical, has_horizontal)
+                    if has_vertical and has_horizontal:
+                        if len(f_xy) > 4:
+                            cor_x_mean = f_xy.x.mean()
+                            cor_y_mean = f_xy.y.mean()
+
+                            total_pts_len = len(f_xy)
+                            right_pts = f_xy[f_xy.x >= cor_x_mean]
+                            top_pts = f_xy[f_xy.y >= cor_y_mean]
+
+                            is_top = len(top_pts) > total_pts_len - len(top_pts)
+                            is_right = len(right_pts) > total_pts_len - len(right_pts)
+
+                            if is_top:
+                                cor_y_mean = top_pts.y.mean()
+                            else:
+                                cor_y_mean = f_xy[f_xy.y < cor_y_mean].y.mean()
+
+                            if is_right:
+                                cor_x_mean = right_pts.x.mean()
+                            else:
+                                cor_x_mean = f_xy[f_xy.x < cor_x_mean].x.mean()
+
+                        else:
+                            cor_x_mean, cor_y_mean = f_xy.x.mean(), f_xy.y.mean()
+                        can_cor_x.append(int(cor_x_mean))
+                        can_cor_y.append(int(cor_y_mean))
+
+            self.corners = pd.DataFrame(
+                data=list(zip(can_cor_x, can_cor_y)),
+                columns=['x', 'y']
+            ).astype(int)
+
+        return self.corners
+
     def visualize_lidar_points(self, points=True, corners=True, drone_pos=True):
         if points:
             self.get_all_points().plot(kind='scatter', x='x', y='y', s=1, ax=self.ax)
         if drone_pos:
             self.get_drone_positions().plot(kind='line', x='x', y='y', ax=self.ax)
+        if corners:
+            self.get_all_corners().plot(kind='scatter', x='x', y='y', color='k', ax=self.ax)
         plt.show()
 
 
