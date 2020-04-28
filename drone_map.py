@@ -1,6 +1,7 @@
 import csv
 import math
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
@@ -8,6 +9,8 @@ class DroneMap:
     def __init__(self, lidar_points_csv: str, flight_path_csv: str):
         self.lidar_points_csv = lidar_points_csv
         self.flight_path_csv = flight_path_csv
+
+        self.fig, self.ax = plt.subplots()
 
         self.drone_positions = None
         self.points = None
@@ -63,6 +66,13 @@ class DroneMap:
 
         return self.points
 
+    def visualize_lidar_points(self, points=True, corners=True, drone_pos=True):
+        if points:
+            self.get_all_points().plot(kind='scatter', x='x', y='y', s=1, ax=self.ax)
+        if drone_pos:
+            self.get_drone_positions().plot(kind='line', x='x', y='y', ax=self.ax)
+        plt.show()
+
 
 if __name__ == '__main__':
     dm = DroneMap(
@@ -71,4 +81,5 @@ if __name__ == '__main__':
     )
 
     # print(dm.get_drone_positions())
-    print(dm.get_all_points())
+    # print(dm.get_all_points())
+    dm.visualize_lidar_points()
