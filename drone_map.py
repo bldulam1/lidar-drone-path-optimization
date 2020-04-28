@@ -36,7 +36,7 @@ class DroneMap:
     def get_all_points(self, max_sweep=-1) -> (pd.DataFrame, pd.DataFrame):
         pos = self.get_drone_positions()
         if self.points is None:
-            x, y = [], []
+            x, y, sweep_id = [], [], []
 
             with open(file=self.lidar_points_csv) as f:
                 i = next_row_header = 0
@@ -56,14 +56,13 @@ class DroneMap:
                         curr_y = float(r) * math.sin(theta) + pos_y
                         x.append(curr_x)
                         y.append(curr_y)
+                        sweep_id.append(cf_sweep)
                     i += 1
 
             self.points = pd.DataFrame(
-                data=list(zip(x, y)),
-                columns=['x', 'y']
+                data=list(zip(x, y, sweep_id)),
+                columns=['x', 'y', 'i']
             )
-            self.points = self.points.drop_duplicates(keep='last')
-            self.points = self.points.sort_values(by=['x', 'y'])
 
         return self.points
 
@@ -125,11 +124,27 @@ class DroneMap:
 
         return self.corners
 
-    def visualize_lidar_points(self, points=True, corners=True, drone_pos=True):
+    def visualize_lidar_points(self, points=True, corners=True, drone_pos=True, by_scan_id=False, plot_interval=1):
+        if by_scan_id:
+            pts = self.get_all_points()
+            pos = self.get_drone_positions()
+            for i in range(len(pos)):
+                plt.close(self.fig)
+                self.fig, self.ax = plt.subplots()
+                if points:
+                    pts[pts.i == i].plot(kind='scatter', x='x', y='y', s=1, ax=self.ax)
+                if drone_pos:
+                    pos.iloc[i:i + 1].plot(kind='scatter', x='x', y='y', s=10, color='r', ax=self.ax)
+                plt.show(block=False)
+                plt.pause(plot_interval)
+
+            plt.close(self.fig)
+            self.fig, self.ax = plt.subplots()
+
         if points:
             self.get_all_points().plot(kind='scatter', x='x', y='y', s=1, ax=self.ax)
         if drone_pos:
-            self.get_drone_positions().plot(kind='line', x='x', y='y', ax=self.ax)
+            self.get_drone_positions().plot(kind='line', x='x', y='y', color='r', ax=self.ax)
         if corners:
             self.get_all_corners().plot(kind='scatter', x='x', y='y', color='k', ax=self.ax)
         plt.show()
@@ -141,6 +156,4 @@ if __name__ == '__main__':
         flight_path_csv='./.cache/FlightPath.csv'
     )
 
-    # print(dm.get_drone_positions())
-    # print(dm.get_all_points())
-    dm.visualize_lidar_points()
+    dm.visualize_lidar_points(by_scan_id=False)
