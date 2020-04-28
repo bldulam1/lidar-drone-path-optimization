@@ -328,7 +328,8 @@ class DroneMap:
 
         return nodes
 
-    def get_optimum_flight_path(self, start: LidarPoint, end: LidarPoint, is_visit_all_rooms=False, plot=False):
+    def get_optimum_flight_path(self, start: LidarPoint, end: LidarPoint, is_visit_all_rooms=False, plot=False,
+                                fp_csv=None):
         connections = []
 
         for node in self.get_nodes(start=start, end=end):
@@ -357,6 +358,22 @@ class DroneMap:
         if plot:
             df.plot(kind='line', x='x', y='y', color='r', ax=self.ax)
             self.visualize_lidar_points(drone_pos=False)
+        if fp_csv is not None:
+            fp_csv_dir = os.path.dirname(fp_csv)
+            if not os.path.exists(fp_csv_dir):
+                os.makedirs(fp_csv_dir)
+            with open(fp_csv, 'w', newline='') as csvfile:
+                spamwriter = csv.writer(
+                    csvfile,
+                    delimiter=',',
+                    quotechar='"',
+                    quoting=csv.QUOTE_MINIMAL
+                )
+                for i in range(len(df)):
+                    row = df.iloc[i]
+                    spamwriter.writerow([i, 1])
+                    spamwriter.writerow([row.x / 1e3, row.y / 1e3])
+
         return df
 
 
@@ -386,4 +403,8 @@ if __name__ == '__main__':
     # print(nodes)
 
     """Get Optimum Flight Path"""
-    dm.get_optimum_flight_path(start=LidarPoint(7.5e3, 8e3), end=LidarPoint(17.5e3, 12e3), plot=True)
+    dm.get_optimum_flight_path(
+        start=LidarPoint(7.5e3, 8e3),
+        end=LidarPoint(17.5e3, 12e3),
+        fp_csv='./.cache/fp.csv',
+    )

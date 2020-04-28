@@ -5,6 +5,7 @@ import pandas as pd
 
 from drone_map import DroneMap
 from lidar_point import LidarPoint
+from wall_distance import get_distance_from_nearest_wall
 
 
 def generate_lidar_points(m_csv: str, lp_csv: str, fp_csv: str, num_points=500) -> pd.DataFrame:
