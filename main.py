@@ -1,4 +1,4 @@
-# TODO: Display
+# TODO: Simulation
 from drone_map import DroneMap
 
 
