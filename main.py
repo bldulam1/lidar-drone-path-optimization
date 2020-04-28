@@ -30,18 +30,25 @@ if __name__ == '__main__':
         Input:  Mapping.csv, FlightPath.csv
         Output: LidarPoints.csv
     """
-    lp_csv = './.cache/lp.csv'
-    fp_csv = './.cache/FlightPath.csv'
-    lp = generate_lidar_points(
-        m_csv='./.cache/Mapping.csv',
-        fp_csv=fp_csv,
-        lp_csv=lp_csv,
-        num_points=534
-    )
-    # TODO Improve accuracy of identifying corners
-    visualize(
-        drone_map=DroneMap(
-            lidar_points_csv=lp_csv,
-            flight_path_csv=fp_csv
-        )
-    )
+    # lp_csv = './.cache/lp.csv'
+    # fp_csv = './.cache/FlightPath.csv'
+    # # TODO memoize lidar point generation
+    # lp = generate_lidar_points(
+    #     m_csv='./.cache/Mapping.csv',
+    #     fp_csv=fp_csv,
+    #     lp_csv=lp_csv,
+    #     num_points=534
+    # )
+    # # TODO Improve accuracy of identifying corners
+    # visualize(
+    #     drone_map=DroneMap(
+    #         lidar_points_csv=lp_csv,
+    #         flight_path_csv=fp_csv
+    #     )
+    # )
+
+    """
+    Challenege 4: Flight Reroute
+        Input: LidarPoints.csv and FlightPath.csv
+        Output: FlightPath.csv
+    """
