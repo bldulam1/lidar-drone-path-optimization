@@ -6,6 +6,7 @@ from typing import List
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from dijkstra import Graph
 from lidar_point import LidarPoint
 from lidar_vector import LidarVector
 from wall_corner import WallCorner
@@ -327,6 +328,37 @@ class DroneMap:
 
         return nodes
 
+    def get_optimum_flight_path(self, start: LidarPoint, end: LidarPoint, is_visit_all_rooms=False, plot=False):
+        connections = []
+
+        for node in self.get_nodes(start=start, end=end):
+            for neighbor in node.neighbors:
+                if is_visit_all_rooms and node == start and neighbor == end:
+                    continue
+
+                if neighbor.opening_pair and node != neighbor.opening_pair:
+                    neighbor_pair_distance = LidarVector(node, neighbor.opening_pair).distance
+                    neighbor_distance = LidarVector(node, neighbor).distance
+                    if neighbor_pair_distance < neighbor_distance:
+                        continue
+
+                connections.append(
+                    (node, neighbor, LidarVector(node, neighbor).distance)
+                )
+
+        x_s, y_s = [], []
+        positions = Graph(connections).dijkstra(start, end)
+        for pos in positions:
+            x_s.append(pos.x)
+            y_s.append(pos.y)
+
+        df = pd.DataFrame(data=list(zip(x_s, y_s)), columns=['x', 'y'])
+
+        if plot:
+            df.plot(kind='line', x='x', y='y', color='r', ax=self.ax)
+            self.visualize_lidar_points(drone_pos=False)
+        return df
+
 
 if __name__ == '__main__':
     dm = DroneMap(
@@ -352,3 +384,6 @@ if __name__ == '__main__':
     """Get nodes of each room"""
     # nodes = dm.get_nodes(start=LidarPoint(7.5e3, 8e3), end=LidarPoint(17.5e3, 8e3))
     # print(nodes)
+
+    """Get Optimum Flight Path"""
+    dm.get_optimum_flight_path(start=LidarPoint(7.5e3, 8e3), end=LidarPoint(17.5e3, 12e3), plot=True)

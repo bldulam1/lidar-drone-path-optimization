@@ -1,4 +1,5 @@
 from drone_map import DroneMap
+from lidar_point import LidarPoint
 from simulation import generate_lidar_points
 
 
@@ -52,3 +53,8 @@ if __name__ == '__main__':
         Input: LidarPoints.csv and FlightPath.csv
         Output: FlightPath.csv
     """
+    dm = DroneMap(
+        lidar_points_csv='./.cache/LIDARPoints.csv',
+        flight_path_csv='./.cache/FlightPath.csv'
+    )
+    dm.get_optimum_flight_path(start=LidarPoint(7.5e3, 8e3), end=LidarPoint(17.5e3, 12e3), plot=True)
