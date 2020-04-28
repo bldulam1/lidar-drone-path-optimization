@@ -13,6 +13,18 @@ class LidarVector:
         self.distance = math.sqrt(dx * dx + dy * dy)
         self.direction = math.atan2(dy, dx)
 
+    def get_abc(self) -> (float, float, float):
+        """
+        calculates the a,b,c parameters of the line ax + by = c
+        :return: Tuple[float, float, float]
+        """
+        dy = self.end.y - self.start.y
+        dx = self.end.x - self.start.x
+
+        a, b = dy, -dx
+        c = a * self.start.x + b * self.start.y
+        return a, b, c
+
     def get_intersection_point_with(self, point: LidarPoint, angle: float) -> LidarPoint:
         """
         Calculates the intersection between two this line and the line formed by a point and angle
