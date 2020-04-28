@@ -19,5 +19,12 @@ if __name__ == '__main__':
         flight_path_csv='./.cache/FlightPath.csv'
     )
 
-    # Challenge 1
-    visualize(drone_map=dm, by_scan_id=False)
+    """
+    Challenge 1: Display
+    """
+    # visualize(drone_map=dm, by_scan_id=False)
+
+    """
+    Challenge 5: Mapping
+    """
+    dm.generate_mapping_csv(csv_file="./.cache/Mapping.csv")

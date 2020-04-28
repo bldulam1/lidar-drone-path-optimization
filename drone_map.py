@@ -1,5 +1,6 @@
 import csv
 import math
+import os
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -243,6 +244,12 @@ class DroneMap:
 
         return self.walls
 
+    def generate_mapping_csv(self, csv_file="./.cache/Mapping.csv"):
+        output_dir = os.path.dirname(csv_file)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        self.get_walls().astype(int).to_csv(csv_file, index=False, header=False)
+
 
 if __name__ == '__main__':
     dm = DroneMap(
@@ -251,4 +258,4 @@ if __name__ == '__main__':
     )
 
     # dm.visualize_lidar_points(by_scan_id=False)
-    print(dm.get_walls())
+    # dm.generate_mapping_csv(csv_file="./.cache/Mapping.csv")
