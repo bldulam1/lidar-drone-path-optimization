@@ -1,11 +1,3 @@
-# TODO: Simulation
-# Input: Mapping.csv, FlightPath.csv
-# Output: LidarPoints.csv
-
-# TODO: Mapping
-# Input: LidarPoints.csv, FlightPath.csv
-# Output: Mapping.csv
-
 from drone_map import DroneMap
 
 
@@ -21,10 +13,20 @@ if __name__ == '__main__':
 
     """
     Challenge 1: Display
+        Input:  LidarPoints.csv, FlightPath.csv
+        Output: Plots
     """
     # visualize(drone_map=dm, by_scan_id=False)
 
     """
     Challenge 5: Mapping
+        Input:  LidarPoints.csv, FlightPath.csv
+        Output: Mapping.csv
     """
-    dm.generate_mapping_csv(csv_file="./.cache/Mapping.csv")
+    # dm.generate_mapping_csv(csv_file="./.cache/Mapping.csv")
+
+    """
+    Challenge 2: Simulation
+        Input:  Mapping.csv, FlightPath.csv
+        Output: LidarPoints.csv
+    """
