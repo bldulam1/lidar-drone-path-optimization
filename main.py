@@ -70,9 +70,8 @@ if __name__ == '__main__':
             Input:  LidarPoints.csv, FlightPath.csv
             Output: Mapping.csv
         """
-        dm = DroneMap(lidar_points_csv='./.cache/LIDARPoints.csv', flight_path_csv='./.cache/FlightPath.csv')
-        csv_file = "./.cache/Mapping.csv"
-        dm.generate_mapping_csv(csv_file=csv_file, verbose=True)
+        dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv=args.fp_csv)
+        dm.generate_mapping_csv(csv_file=args.m_csv, verbose=True)
 
     else:
         raise argparse.ArgumentTypeError("Challenge index should be one of the following: 1, 2, 3, 4, 5")

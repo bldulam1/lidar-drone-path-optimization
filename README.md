@@ -48,6 +48,12 @@ python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/lp.csv --fp_csv ./
 python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/fp.csv -v --challenge 4
 ```
 
+##### Mapping
+```shell script
+python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/FlightPath.csv -v --challenge 5
+```
+
+
 ## Package Dependencies
 * [pandas](https://pandas.pydata.org/docs/)
 * [numpy](https://numpy.org/)
