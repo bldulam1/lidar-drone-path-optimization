@@ -31,7 +31,7 @@ pip install -r ./requirements.txt
 ### Predefined tests
 To test the solution to the challenges, please use the following tests, be executing in the shell.
 
-_Please make sure that you are in the directory of this repository._
+_Please make sure that you are in the directory of this repository when executing the following commands._
 
 ##### Display
 ```shell script
