@@ -8,7 +8,7 @@ from lidar_point import LidarPoint
 from wall_distance import get_distance_from_nearest_wall
 
 
-def generate_lidar_points(m_csv: str, lp_csv: str, fp_csv: str, num_points=500) -> pd.DataFrame:
+def generate_lidar_points(m_csv: str, lp_csv: str, fp_csv: str, num_points=500, verbose=False) -> pd.DataFrame:
     if not (os.path.exists(m_csv) and os.path.exists(fp_csv)):
         return pd.DataFrame(data=[])
 
@@ -22,6 +22,8 @@ def generate_lidar_points(m_csv: str, lp_csv: str, fp_csv: str, num_points=500) 
 
     for i in range(len(pts)):
         pt = pts.iloc[i]
+        if verbose:
+            print("generating lidar points around ({:.4f}, {:.4f})".format(pt.x, pt.y))
         angles.append(i)
         distances.append(num_points)
         for theta in np.linspace(start=0, stop=360, num=num_points, endpoint=False):
@@ -43,6 +45,8 @@ def generate_lidar_points(m_csv: str, lp_csv: str, fp_csv: str, num_points=500) 
 
     if os.path.exists(os.path.dirname(lp_csv)):
         lp.to_csv(lp_csv, index=False, header=False)
+    if verbose:
+        print("Written the csv file: {}".format(os.path.realpath(lp_csv)))
 
     return lp
 

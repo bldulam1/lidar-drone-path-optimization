@@ -41,7 +41,7 @@ if __name__ == '__main__':
         lp_csv = './.cache/lp.csv'
         fp_csv = './.cache/FlightPath.csv'
         # TODO memoize lidar point generation
-        generate_lidar_points(m_csv='./.cache/Mapping.csv', fp_csv=fp_csv, lp_csv=lp_csv, num_points=534)
+        generate_lidar_points(m_csv='./.cache/Mapping.csv', fp_csv=fp_csv, lp_csv=lp_csv, num_points=534, verbose=True)
         # TODO Improve accuracy of identifying corners
         dm = DroneMap(lidar_points_csv=lp_csv, flight_path_csv=fp_csv)
         dm.visualize_lidar_points()
