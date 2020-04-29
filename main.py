@@ -46,7 +46,7 @@ if __name__ == '__main__':
         fp_csv = './.cache/FlightPath.csv'
         # TODO memoize lidar point generation
         # TODO figure 1 is an empty figure
-        generate_lidar_points(m_csv='./.cache/Mapping.csv', fp_csv=fp_csv, lp_csv=lp_csv, num_points=534, verbose=True)
+        generate_lidar_points(m_csv='./.cache/Mapping.csv', fp_csv=fp_csv, lp_csv=lp_csv, num_points=534, verbose=args.verbose)
         # TODO Improve accuracy of identifying corners
         dm = DroneMap(lidar_points_csv=lp_csv, flight_path_csv=fp_csv)
         dm.visualize_lidar_points()
@@ -64,7 +64,7 @@ if __name__ == '__main__':
             end=LidarPoint(17.5e3, 12e3),
             fp_csv='./.cache/fp.csv',
             plot=True,
-            verbose=True
+            verbose=args.verbose
         )
     elif args.challenge == 5:
         """
@@ -74,9 +74,7 @@ if __name__ == '__main__':
         """
         dm = DroneMap(lidar_points_csv='./.cache/LIDARPoints.csv', flight_path_csv='./.cache/FlightPath.csv')
         csv_file = "./.cache/Mapping.csv"
-        dm.generate_mapping_csv(csv_file=csv_file)
-        print("Generated {}, with the following contents:".format(os.path.realpath(csv_file)))
-        print(dm.get_walls())
+        dm.generate_mapping_csv(csv_file=csv_file, verbose=True)
 
     else:
-        raise argparse.ArgumentTypeError("Challenge index should be one of 1, 2, 3, 4, 5")
+        raise argparse.ArgumentTypeError("Challenge index should be one of the following: 1, 2, 3, 4, 5")

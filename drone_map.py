@@ -250,11 +250,16 @@ class DroneMap:
 
         return self.walls
 
-    def generate_mapping_csv(self, csv_file="./.cache/Mapping.csv"):
+    def generate_mapping_csv(self, csv_file="./.cache/Mapping.csv", verbose=False):
         output_dir = os.path.dirname(csv_file)
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
+        if verbose:
+            print("generating walls")
         self.get_walls().astype(int).to_csv(csv_file, index=False, header=False)
+        if verbose:
+            print("Written the csv file: {}, with the following contents".format(os.path.realpath(csv_file)))
+            print(self.get_walls())
 
     def is_connected(self, p1: LidarPoint, p2: LidarPoint) -> bool:
         walls = self.get_walls()
