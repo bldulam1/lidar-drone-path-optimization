@@ -1,5 +1,4 @@
 import argparse
-import os
 
 from drone_map import DroneMap
 from lidar_point import LidarPoint
@@ -46,7 +45,8 @@ if __name__ == '__main__':
         fp_csv = './.cache/FlightPath.csv'
         # TODO memoize lidar point generation
         # TODO figure 1 is an empty figure
-        generate_lidar_points(m_csv='./.cache/Mapping.csv', fp_csv=fp_csv, lp_csv=lp_csv, num_points=534, verbose=args.verbose)
+        generate_lidar_points(m_csv='./.cache/Mapping.csv', fp_csv=fp_csv, lp_csv=lp_csv, num_points=534,
+                              verbose=args.verbose)
         # TODO Improve accuracy of identifying corners
         dm = DroneMap(lidar_points_csv=lp_csv, flight_path_csv=fp_csv)
         dm.visualize_lidar_points()
