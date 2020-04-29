@@ -29,9 +29,9 @@ pip install -r ./requirements.txt
 ```
 
 ### Predefined tests
-To test the solution to the challenges, please use the following tests, be executing in the shell.
+To test the solution to the challenges, please use the following tests, by executing through the shell.
 
-_Please make sure that you are in the directory of this repository._
+_Please make sure that you are in the directory of this repository when executing the following commands._
 
 ##### Display
 ```shell script
