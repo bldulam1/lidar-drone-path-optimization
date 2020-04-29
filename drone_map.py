@@ -329,9 +329,10 @@ class DroneMap:
         return nodes
 
     def get_optimum_flight_path(self, start: LidarPoint, end: LidarPoint, is_visit_all_rooms=False, plot=False,
-                                fp_csv=None):
+                                fp_csv=None, verbose=False):
         connections = []
-
+        if verbose:
+            print("generating nodes")
         for node in self.get_nodes(start=start, end=end):
             for neighbor in node.neighbors:
                 if is_visit_all_rooms and node == start and neighbor == end:
@@ -348,6 +349,9 @@ class DroneMap:
                 )
 
         x_s, y_s = [], []
+
+        if verbose:
+            print("analyzing shortest path")
         positions = Graph(connections).dijkstra(start, end)
         for pos in positions:
             x_s.append(pos.x)
@@ -355,13 +359,11 @@ class DroneMap:
 
         df = pd.DataFrame(data=list(zip(x_s, y_s)), columns=['x', 'y'])
 
-        if plot:
-            df.plot(kind='line', x='x', y='y', color='r', ax=self.ax)
-            self.visualize_lidar_points(drone_pos=False)
         if fp_csv is not None:
             fp_csv_dir = os.path.dirname(fp_csv)
             if not os.path.exists(fp_csv_dir):
                 os.makedirs(fp_csv_dir)
+
             with open(fp_csv, 'w', newline='') as csvfile:
                 spamwriter = csv.writer(
                     csvfile,
@@ -373,6 +375,15 @@ class DroneMap:
                     row = df.iloc[i]
                     spamwriter.writerow([i, 1])
                     spamwriter.writerow([row.x / 1e3, row.y / 1e3])
+
+            if verbose:
+                print("Written the csv file: {}".format(os.path.realpath(fp_csv)))
+
+        if plot:
+            df.plot(kind='line', x='x', y='y', color='r', ax=self.ax)
+            if verbose:
+                print("plotting results")
+            self.visualize_lidar_points(drone_pos=False)
 
         return df
 
