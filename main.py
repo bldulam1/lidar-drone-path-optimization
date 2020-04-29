@@ -28,6 +28,7 @@ if __name__ == '__main__':
             Input:  LidarPoints.csv, FlightPath.csv
             Output: Plots
         """
+        print('Executing Challenge %d' % args.challenge)
         dm = DroneMap(lidar_points_csv='./.cache/LIDARPoints.csv', flight_path_csv='./.cache/FlightPath.csv')
         dm.visualize_lidar_points(by_scan_id=True)
     elif args.challenge == 2:
@@ -36,6 +37,7 @@ if __name__ == '__main__':
             Input:  Mapping.csv, FlightPath.csv
             Output: LidarPoints.csv
         """
+        print('Executing Challenge %d' % args.challenge)
         lp_csv = './.cache/lp.csv'
         fp_csv = './.cache/FlightPath.csv'
         # TODO memoize lidar point generation
@@ -51,6 +53,7 @@ if __name__ == '__main__':
             Input: LidarPoints.csv and FlightPath.csv
             Output: FlightPath.csv
         """
+        print('Executing Challenge %d' % args.challenge)
         dm = DroneMap(lidar_points_csv='./.cache/LIDARPoints.csv', flight_path_csv='./.cache/FlightPath.csv')
         dm.get_optimum_flight_path(
             start=LidarPoint(7.5e3, 8e3),
@@ -64,11 +67,8 @@ if __name__ == '__main__':
             Input:  LidarPoints.csv, FlightPath.csv
             Output: Mapping.csv
         """
-        print("Executing Challenge 5")
-        dm = DroneMap(
-            lidar_points_csv='./.cache/LIDARPoints.csv',
-            flight_path_csv='./.cache/FlightPath.csv'
-        )
+        print('Executing Challenge %d' % args.challenge)
+        dm = DroneMap(lidar_points_csv='./.cache/LIDARPoints.csv', flight_path_csv='./.cache/FlightPath.csv')
         csv_file = "./.cache/Mapping.csv"
         dm.generate_mapping_csv(csv_file=csv_file)
         print("Generated {}, with the following contents:".format(os.path.realpath(csv_file)))
