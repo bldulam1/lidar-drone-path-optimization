@@ -10,16 +10,41 @@ This application is written in Python3. Please follow the following steps to run
 
 Please make sure that you are using python3 to run this application
 
+### Cloning this Repository
 
+To clone this repository, please make sure that you have installed git.
+Then execute the following:
+
+```shell script
+git clone https://github.com/bldulam1/lidar-drone-path-optimization
+```
 ### Installing Dependencies
 
 To install the package dependencies, please install the packages in the `requirements.txt`.
 
 Please go to this project's directory then execute the following in the shell
 
-```
+```shell script
 pip install -r ./requirements.txt
 ```
+
+### Predefined tests
+To test the solution to the challenges, please use the following tests, be executing in the shell.
+
+_Please make sure that you are in the directory of this repository._
+
+##### Display
+
+```shell script
+python main.py --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/FlightPath.csv -v --challenge 1
+```
+
+##### Simulation
+
+```shell script
+python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/lp.csv --fp_csv ./.cache/FlightPath.csv -v --challenge 2
+```
+
 
 ## Package Dependencies
 * [pandas](https://pandas.pydata.org/docs/)

@@ -33,7 +33,7 @@ if __name__ == '__main__':
             Input:  LidarPoints.csv, FlightPath.csv
             Output: Plots
         """
-        dm = DroneMap(lidar_points_csv='./.cache/LIDARPoints.csv', flight_path_csv='./.cache/FlightPath.csv')
+        dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv=args.fp_csv)
         dm.visualize_lidar_points(by_scan_id=True)
     elif args.challenge == 2:
         """
@@ -41,14 +41,12 @@ if __name__ == '__main__':
             Input:  Mapping.csv, FlightPath.csv
             Output: LidarPoints.csv
         """
-        lp_csv = './.cache/lp.csv'
-        fp_csv = './.cache/FlightPath.csv'
         # TODO memoize lidar point generation
         # TODO figure 1 is an empty figure
-        generate_lidar_points(m_csv='./.cache/Mapping.csv', fp_csv=fp_csv, lp_csv=lp_csv, num_points=534,
+        generate_lidar_points(m_csv='./.cache/Mapping.csv', fp_csv=args.fp_csv, lp_csv=args.lp_csv, num_points=534,
                               verbose=args.verbose)
         # TODO Improve accuracy of identifying corners
-        dm = DroneMap(lidar_points_csv=lp_csv, flight_path_csv=fp_csv)
+        dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv=args.fp_csv)
         dm.visualize_lidar_points()
     elif args.challenge == 3:
         print("Challenge %s has no solution yet" % args.challenge)
