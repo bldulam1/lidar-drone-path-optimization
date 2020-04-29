@@ -34,17 +34,19 @@ To test the solution to the challenges, please use the following tests, be execu
 _Please make sure that you are in the directory of this repository._
 
 ##### Display
-
 ```shell script
 python main.py --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/FlightPath.csv -v --challenge 1
 ```
 
 ##### Simulation
-
 ```shell script
 python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/lp.csv --fp_csv ./.cache/FlightPath.csv -v --challenge 2
 ```
 
+##### Flight Reroute
+```shell script
+python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/fp.csv -v --challenge 4
+```
 
 ## Package Dependencies
 * [pandas](https://pandas.pydata.org/docs/)
