@@ -334,24 +334,36 @@ class DroneMap:
         return nodes
 
     def get_optimum_flight_path(self, start: LidarPoint, end: LidarPoint, is_visit_all_rooms=False, plot=False,
-                                fp_csv=None, verbose=False):
+                                fp_csv=None, verbose=False, min_wall_distance=300):
         connections = []
+        points = self.get_all_points()
         if verbose:
             print("generating nodes")
         for node in self.get_nodes(start=start, end=end):
             for neighbor in node.neighbors:
-                if is_visit_all_rooms and node == start and neighbor == end:
-                    continue
+                vector = LidarVector(node, neighbor)
+                a, b, c = vector.get_abc()
 
-                if neighbor.opening_pair and node != neighbor.opening_pair:
-                    neighbor_pair_distance = LidarVector(node, neighbor.opening_pair).distance
-                    neighbor_distance = LidarVector(node, neighbor).distance
-                    if neighbor_pair_distance < neighbor_distance:
-                        continue
+                if vector.start.x < vector.end.x:
+                    start_x, end_x = vector.start.x, vector.end.x
+                else:
+                    end_x, start_x = vector.start.x, vector.end.x
 
-                connections.append(
-                    (node, neighbor, LidarVector(node, neighbor).distance)
-                )
+                if vector.start.y < vector.end.y:
+                    start_y, end_y = vector.start.y, vector.end.y
+                else:
+                    end_y, start_y = vector.start.y, vector.end.y
+
+                p = points[
+                    (points.x >= start_x) & (points.x <= end_x) &
+                    (points.y >= start_y) & (points.y <= end_y) &
+                    (a * points.x + b * points.y > c)
+                    ]
+
+                if not len(p):
+                    connections.append(
+                        (node, neighbor, vector.distance)
+                    )
 
         x_s, y_s = [], []
 
