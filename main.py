@@ -18,6 +18,18 @@ if __name__ == '__main__':
     parser.add_argument('--m_csv',
                         action="store", dest="m_csv", type=str,
                         help='complete path of the Mapping.csv')
+    parser.add_argument('--start_x',
+                        action="store", dest="start_x", type=float,
+                        help='x starting point')
+    parser.add_argument('--start_y',
+                        action="store", dest="start_y", type=float,
+                        help='y starting point')
+    parser.add_argument('--end_x',
+                        action="store", dest="end_x", type=float,
+                        help='x end point')
+    parser.add_argument('--end_y',
+                        action="store", dest="end_y", type=float,
+                        help='y end point')
     parser.add_argument('-v',
                         action="store_true", dest='verbose', default=False,
                         help='verbose')
@@ -56,14 +68,19 @@ if __name__ == '__main__':
             Input: LidarPoints.csv and FlightPath.csv
             Output: FlightPath.csv
         """
-        dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv='./.cache/FlightPath.csv')
-        dm.get_optimum_flight_path(
-            end=LidarPoint(2.5e3, 8e3),
-            start=LidarPoint(20e3, 12e3),
-            fp_csv=args.fp_csv,
-            plot=True,
-            verbose=args.verbose
-        )
+        if args.fp_csv and args.lp_csv and \
+                args.start_x is not None and args.start_y is not None and \
+                args.end_x is not None and args.end_y is not None:
+            dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv='./.cache/FlightPath.csv')
+            dm.get_optimum_flight_path(
+                end=LidarPoint(args.end_x, args.end_y),
+                start=LidarPoint(args.start_x, args.start_y),
+                fp_csv=args.fp_csv,
+                plot=True,
+                verbose=args.verbose
+            )
+        else:
+            print("missing parameters")
     elif args.challenge == 5:
         """
         Challenge 5: Mapping
