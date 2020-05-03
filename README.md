@@ -25,6 +25,7 @@ To install the package dependencies, please install the packages in the `require
 Please go to this project's directory then execute the following in the shell
 
 ```shell script
+cd lidar-drone-path-optimization
 pip install -r ./requirements.txt
 ```
 
