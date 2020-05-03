@@ -50,8 +50,7 @@ class Graph:
         vertices = self.vertices.copy()
 
         while vertices:
-            current_vertex = min(
-                vertices, key=lambda vertex: distances[vertex])
+            current_vertex = min(vertices, key=lambda vertex: distances[vertex])
             vertices.remove(current_vertex)
             if distances[current_vertex] == inf:
                 break
@@ -68,6 +67,28 @@ class Graph:
         if path:
             path.appendleft(current_vertex)
         return path
+
+    def bfs(self, start):
+        assert start in self.vertices, 'Such source node doesn\'t exist'
+        visited = set()
+        queue = [start]
+        # vertices = self.vertices.copy()
+
+        while queue:
+            s = queue.pop(0)
+            visited.add(s)
+            print(s, end=" ")
+
+            # current_vertex = min(vertices, key=lambda vertex: distances[vertex])
+            print(self.neighbours[s])
+
+            nearest_neighbor, nn_dist= None,
+            for neighbour, cost in self.neighbours[s]:
+                if neighbour in visited or neighbour in queue:
+                    continue
+                queue.append(neighbour)
+
+
 
     # def remove_edge(self, n1, n2, both_ends=True):
     #     node_pairs = self.get_node_pairs(n1, n2, both_ends)
@@ -91,6 +112,8 @@ if __name__ == '__main__':
     graph = Graph([
         ("a", "b", 7), ("a", "c", 9), ("a", "f", 14), ("b", "c", 10),
         ("b", "d", 15), ("c", "d", 11), ("c", "f", 2), ("d", "e", 6),
-        ("e", "f", 9)])
+        ("e", "f", 9)
+    ])
 
-    print(graph.dijkstra("a", "e"))
+    graph.bfs(start="a")
+    # print(graph.dijkstra("a", "e"))

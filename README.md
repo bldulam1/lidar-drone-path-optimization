@@ -45,7 +45,7 @@ python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/lp.csv --fp_csv ./
 
 ##### Flight Reroute
 ```shell script
-python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/fp.csv -v --challenge 4
+python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/fp.csv -v --start_x 11e3 --start_y 4e3 --end_x 2.5e3 --end_y 12e3 --challenge 4
 ```
 
 ##### Mapping

@@ -68,9 +68,19 @@ if __name__ == '__main__':
             Input: LidarPoints.csv and FlightPath.csv
             Output: FlightPath.csv
         """
-        if args.fp_csv and args.lp_csv and \
-                args.start_x is not None and args.start_y is not None and \
-                args.end_x is not None and args.end_y is not None:
+        if args.fp_csv is None:
+            print("missing flight path csv")
+        elif args.lp_csv is None:
+            print("missing lidar points csv")
+        elif args.start_x is None:
+            print("missing starting point x coordinate")
+        elif args.start_y is None:
+            print("missing starting point y coordinate")
+        elif args.end_x is None:
+            print("missing end point x coordinate")
+        elif args.end_y is None:
+            print("missing end point y coordinate")
+        else:
             dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv='./.cache/FlightPath.csv')
             dm.get_optimum_flight_path(
                 end=LidarPoint(args.end_x, args.end_y),
@@ -79,8 +89,7 @@ if __name__ == '__main__':
                 plot=True,
                 verbose=args.verbose
             )
-        else:
-            print("missing parameters")
+
     elif args.challenge == 5:
         """
         Challenge 5: Mapping

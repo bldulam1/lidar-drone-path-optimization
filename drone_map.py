@@ -363,8 +363,8 @@ class DroneMap:
                     connections.append((node, neighbor, vector.distance))
                 elif len(p) < 5:
                     obs_x, obs_y = p.x.mean(), p.y.mean()
-                    obs1 = LidarPoint(obs_x - min_wall_distance, obs_y + min_wall_distance)
-                    obs2 = LidarPoint(obs_x - min_wall_distance, obs_y - min_wall_distance)
+                    obs1 = LidarPoint(obs_x, obs_y + min_wall_distance)
+                    obs2 = LidarPoint(obs_x, obs_y - min_wall_distance)
 
                     lv11 = LidarVector(node, obs1)
                     lv12 = LidarVector(obs1, neighbor)
