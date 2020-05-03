@@ -342,7 +342,7 @@ class DroneMap:
         for node in self.get_nodes(start=start, end=end):
             for neighbor in node.neighbors:
                 vector = LidarVector(node, neighbor)
-                a, b, c = vector.get_abc()
+                # a, b, c = vector.get_abc()
 
                 if vector.start.x < vector.end.x:
                     start_x, end_x = vector.start.x, vector.end.x
@@ -356,14 +356,25 @@ class DroneMap:
 
                 p = points[
                     (points.x >= start_x) & (points.x <= end_x) &
-                    (points.y >= start_y) & (points.y <= end_y) &
-                    (a * points.x + b * points.y > c)
+                    (points.y >= start_y) & (points.y <= end_y)
                     ]
 
                 if not len(p):
-                    connections.append(
-                        (node, neighbor, vector.distance)
-                    )
+                    connections.append((node, neighbor, vector.distance))
+                elif len(p) < 5:
+                    obs_x, obs_y = p.x.mean(), p.y.mean()
+                    obs1 = LidarPoint(obs_x - min_wall_distance, obs_y + min_wall_distance)
+                    obs2 = LidarPoint(obs_x - min_wall_distance, obs_y - min_wall_distance)
+
+                    lv11 = LidarVector(node, obs1)
+                    lv12 = LidarVector(obs1, neighbor)
+                    lv21 = LidarVector(node, obs2)
+                    lv22 = LidarVector(obs2, neighbor)
+
+                    connections.append((node, obs1, lv11.distance))
+                    connections.append((obs1, neighbor, lv12.distance))
+                    connections.append((node, obs2, lv21.distance))
+                    connections.append((obs2, neighbor, lv22.distance))
 
         x_s, y_s = [], []
 

@@ -58,8 +58,8 @@ if __name__ == '__main__':
         """
         dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv='./.cache/FlightPath.csv')
         dm.get_optimum_flight_path(
-            start=LidarPoint(7.5e3, 8e3),
-            end=LidarPoint(12.5e3, 10e3),
+            end=LidarPoint(2.5e3, 8e3),
+            start=LidarPoint(20e3, 12e3),
             fp_csv=args.fp_csv,
             plot=True,
             verbose=args.verbose
