@@ -92,7 +92,7 @@ class Graph:
                     source=w, visited=visited, path=path + [source],
                     distance=distance + c, paths=paths
                 )
-                if len(visited) == len(self.vertices):
+                if len(self.vertices) - len(visited) <= 1:
                     paths.append((p, distance + c))
                 visited.remove(w)
 
