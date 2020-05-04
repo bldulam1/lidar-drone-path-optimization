@@ -61,7 +61,17 @@ if __name__ == '__main__':
         dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv=args.fp_csv)
         dm.visualize_lidar_points()
     elif args.challenge == 3:
-        print("Challenge %s has no solution yet" % args.challenge)
+
+        dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv='./.cache/FlightPath.csv')
+        dm.get_optimum_flight_path(
+            end=LidarPoint(args.end_x, args.end_y),
+            start=LidarPoint(args.start_x, args.start_y),
+            fp_csv=args.fp_csv,
+            plot=True,
+            verbose=args.verbose,
+            is_visit_all_rooms=True
+        )
+
     elif args.challenge == 4:
         """
         Challenege 4: Flight Reroute

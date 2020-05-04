@@ -310,8 +310,12 @@ class DroneMap:
 
         return self.wall_openings
 
-    def get_nodes(self, start: LidarPoint, end: LidarPoint) -> List[LidarPoint]:
-        nodes = [start, end]
+    def get_nodes(self, start: LidarPoint, end: LidarPoint = None) -> List[LidarPoint]:
+        nodes = []
+        if start is not None:
+            nodes.append(start)
+        if end is not None:
+            nodes.append(end)
 
         wall_openings = self.get_wall_openings()
         for wo in wall_openings:
@@ -333,16 +337,21 @@ class DroneMap:
 
         return nodes
 
-    def get_optimum_flight_path(self, start: LidarPoint, end: LidarPoint, is_visit_all_rooms=False, plot=False,
-                                fp_csv=None, verbose=False, min_wall_distance=300):
+    def get_optimum_flight_path(self, start: LidarPoint,
+                                end: LidarPoint = None, is_visit_all_rooms=False, plot=False,
+                                fp_csv=None, verbose=False, min_wall_distance=300) -> pd.DataFrame:
         connections = []
         points = self.get_all_points()
         if verbose:
             print("generating nodes")
-        for node in self.get_nodes(start=start, end=end):
+        if is_visit_all_rooms:
+            nodes = self.get_nodes(start=start)
+        else:
+            nodes = self.get_nodes(start=start, end=end)
+
+        for node in nodes:
             for neighbor in node.neighbors:
                 vector = LidarVector(node, neighbor)
-                # a, b, c = vector.get_abc()
 
                 if vector.start.x < vector.end.x:
                     start_x, end_x = vector.start.x, vector.end.x
@@ -380,10 +389,36 @@ class DroneMap:
 
         if verbose:
             print("analyzing shortest path")
-        positions = Graph(connections).shortest_path(start, end)
-        for pos in positions:
-            x_s.append(pos.x)
-            y_s.append(pos.y)
+        if is_visit_all_rooms:
+            paths = []
+            Graph(connections).shortest_path_traverse_all(start, paths=paths)
+
+            best_path, best_distance = None, math.inf,
+            best_dikstra_path = []
+            for bp, bc in paths:
+                df_best_path = self.get_optimum_flight_path(start=bp[len(bp) - 1], end=end)
+                prev_row = df_best_path.iloc[0]
+                distance = 0
+                for _, curr_row in df_best_path[1:].iterrows():
+                    distance += ((curr_row.x - prev_row.x) ** 2 + (curr_row.y - prev_row.y) ** 2) ** 0.5
+                    prev_row = curr_row
+                if distance < best_distance:
+                    best_path, best_distance = bp, distance
+                    best_dikstra_path = df_best_path
+
+            for pos in best_path:
+                x_s.append(pos.x)
+                y_s.append(pos.y)
+            for _, pos in best_dikstra_path.iterrows():
+                x_s.append(pos.x)
+                y_s.append(pos.y)
+
+        else:
+            positions = Graph(connections).shortest_path(start, end)
+
+            for pos in positions:
+                x_s.append(pos.x)
+                y_s.append(pos.y)
 
         df = pd.DataFrame(data=list(zip(x_s, y_s)), columns=['x', 'y'])
 

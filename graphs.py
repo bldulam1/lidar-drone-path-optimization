@@ -76,22 +76,27 @@ class Graph:
             path.appendleft(current_vertex)
         return path
 
-    def shortest_path_traverse_all(self, source, visited=None, path=None, distance=0):
+    def shortest_path_traverse_all(self, source, visited=None, path=None, distance=0, paths=None):
+        if paths is None:
+            paths = []
         if visited is None:
             visited = set()
         if path is None:
             path = []
 
         visited.add(source)
-        # if len(visited) == len(self.vertices):
-        #     print(len(visited), path+[source])
-        #     return path
         for w, c in self.neighbours[source]:
             if w not in visited:
                 visited.add(w)
-                self.shortest_path_traverse_all(source=w, visited=visited, path=path + [source], distance=distance + c)
+                p = self.shortest_path_traverse_all(
+                    source=w, visited=visited, path=path + [source],
+                    distance=distance + c, paths=paths
+                )
+                if len(visited) == len(self.vertices):
+                    paths.append((p, distance + c))
                 visited.remove(w)
-        return path
+
+        return path + [source]
 
     # def remove_edge(self, n1, n2, both_ends=True):
     #     node_pairs = self.get_node_pairs(n1, n2, both_ends)
@@ -119,4 +124,6 @@ if __name__ == '__main__':
     ])
 
     # graph.bfs(start="a")
-    print(graph.shortest_path_traverse_all("a"))
+    p = []
+    graph.shortest_path_traverse_all("a", paths=p)
+    print(p)
