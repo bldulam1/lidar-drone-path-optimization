@@ -16,6 +16,8 @@ class Graph:
             raise ValueError('Wrong edges data: {}'.format(wrong_edges))
 
         self.edges = [make_edge(*edge) for edge in edges]
+        self.previous_vertices = None
+        self.source = None
 
     @property
     def vertices(self):
@@ -40,55 +42,56 @@ class Graph:
 
         return neighbours
 
-    def dijkstra(self, source, dest):
+    def get_previous_vertices(self, source):
+        if self.previous_vertices is None or self.source != source:
+            distances = {vertex: inf for vertex in self.vertices}
+            self.previous_vertices = {
+                vertex: None for vertex in self.vertices
+            }
+            distances[source] = 0
+            vertices = self.vertices.copy()
+
+            while vertices:
+                current_vertex = min(vertices, key=lambda vertex: distances[vertex])
+                vertices.remove(current_vertex)
+                if distances[current_vertex] == inf:
+                    break
+                for neighbour, cost in self.neighbours[current_vertex]:
+                    alternative_route = distances[current_vertex] + cost
+                    if alternative_route < distances[neighbour]:
+                        distances[neighbour] = alternative_route
+                        self.previous_vertices[neighbour] = current_vertex
+
+        return self.previous_vertices
+
+    def shortest_path(self, source, dest):
         assert source in self.vertices, 'Such source node doesn\'t exist'
-        distances = {vertex: inf for vertex in self.vertices}
-        previous_vertices = {
-            vertex: None for vertex in self.vertices
-        }
-        distances[source] = 0
-        vertices = self.vertices.copy()
 
-        while vertices:
-            current_vertex = min(vertices, key=lambda vertex: distances[vertex])
-            vertices.remove(current_vertex)
-            if distances[current_vertex] == inf:
-                break
-            for neighbour, cost in self.neighbours[current_vertex]:
-                alternative_route = distances[current_vertex] + cost
-                if alternative_route < distances[neighbour]:
-                    distances[neighbour] = alternative_route
-                    previous_vertices[neighbour] = current_vertex
-
+        pv = self.get_previous_vertices(source)
         path, current_vertex = deque(), dest
-        while previous_vertices[current_vertex] is not None:
+        while pv[current_vertex] is not None:
             path.appendleft(current_vertex)
-            current_vertex = previous_vertices[current_vertex]
+            current_vertex = pv[current_vertex]
         if path:
             path.appendleft(current_vertex)
         return path
 
-    def bfs(self, start):
-        assert start in self.vertices, 'Such source node doesn\'t exist'
-        visited = set()
-        queue = [start]
-        # vertices = self.vertices.copy()
+    def shortest_path_traverse_all(self, source, visited=None, path=None, distance=0):
+        if visited is None:
+            visited = set()
+        if path is None:
+            path = []
 
-        while queue:
-            s = queue.pop(0)
-            visited.add(s)
-            print(s, end=" ")
-
-            # current_vertex = min(vertices, key=lambda vertex: distances[vertex])
-            print(self.neighbours[s])
-
-            nearest_neighbor, nn_dist= None,
-            for neighbour, cost in self.neighbours[s]:
-                if neighbour in visited or neighbour in queue:
-                    continue
-                queue.append(neighbour)
-
-
+        visited.add(source)
+        # if len(visited) == len(self.vertices):
+        #     print(len(visited), path+[source])
+        #     return path
+        for w, c in self.neighbours[source]:
+            if w not in visited:
+                visited.add(w)
+                self.shortest_path_traverse_all(source=w, visited=visited, path=path + [source], distance=distance + c)
+                visited.remove(w)
+        return path
 
     # def remove_edge(self, n1, n2, both_ends=True):
     #     node_pairs = self.get_node_pairs(n1, n2, both_ends)
@@ -115,5 +118,5 @@ if __name__ == '__main__':
         ("e", "f", 9)
     ])
 
-    graph.bfs(start="a")
-    # print(graph.dijkstra("a", "e"))
+    # graph.bfs(start="a")
+    print(graph.shortest_path_traverse_all("a"))

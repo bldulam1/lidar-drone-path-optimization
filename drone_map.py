@@ -6,7 +6,7 @@ from typing import List
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from dijkstra import Graph
+from graphs import Graph
 from lidar_point import LidarPoint
 from lidar_vector import LidarVector
 from wall_corner import WallCorner
@@ -380,7 +380,7 @@ class DroneMap:
 
         if verbose:
             print("analyzing shortest path")
-        positions = Graph(connections).dijkstra(start, end)
+        positions = Graph(connections).shortest_path(start, end)
         for pos in positions:
             x_s.append(pos.x)
             y_s.append(pos.y)
