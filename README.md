@@ -44,6 +44,12 @@ python main.py --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/FlightPath.cs
 python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/lp.csv --fp_csv ./.cache/FlightPath.csv -v --challenge 2
 ```
 
+##### Flight Optimization
+```shell script
+python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/fp.csv -v --start_x 11e3 --start_y 4e3 --end_x 2.5e3 --end_y 12e3 --challenge 3
+```
+
+
 ##### Flight Reroute
 ```shell script
 python main.py --m_csv ./.cache/Mapping.csv --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/fp.csv -v --start_x 11e3 --start_y 4e3 --end_x 2.5e3 --end_y 12e3 --challenge 4
