@@ -34,6 +34,20 @@ To test the solution to the challenges, please use the following tests, by execu
 
 _Please make sure that you are in the directory of this repository when executing the following commands._
 
+#### Description of Arguments
+
+|     Flag    	|                                 Description                                 	| Default Value 	|              Example             	|
+|:-----------:	|:---------------------------------------------------------------------------:	|---------------	|:--------------------------------:	|
+| --challenge 	|                        Specifies the challenge number                       	|               	| --challenge 3                    	|
+| --lp_csv    	|                             lidar point csv file                            	|               	| --lp_csv ./.cache/lp.csv         	|
+| --fp_csv    	|                             flight path csv file                            	|               	| --fp_csv ./.cache/FlightPath.csv 	|
+| --m_csv     	|                               mapping csv file                              	|               	| --m_csv ./.cache/Mapping.csv     	|
+| --start_x   	|      x-coordinate of the starting point, required in challenges 3 and 4     	|               	| --start_x 11e3                   	|
+| --start_y   	|     y-coordinate of the starting point,  required in challenges 3 and 4     	|               	| --start_y 4e3                    	|
+| --end_x     	| x-coordinate of the end pointStartFragment,  required in challenges 3 and 4 	|               	| --end_x 2.5e3                    	|
+| --end_y     	|        y-coordinate of the end point,  required in challenges 3 and 4       	|               	| --end_y 12e3                     	|
+| -v          	|              verbose,  displays each major step in the program              	|               	| -v                               	|
+
 ##### Display
 ```shell script
 python main.py --lp_csv ./.cache/LIDARPoints.csv --fp_csv ./.cache/FlightPath.csv -v --challenge 1

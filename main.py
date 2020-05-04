@@ -47,6 +47,7 @@ if __name__ == '__main__':
         """
         dm = DroneMap(lidar_points_csv=args.lp_csv, flight_path_csv=args.fp_csv)
         dm.visualize_lidar_points(by_scan_id=True)
+
     elif args.challenge == 2:
         """
         Challenge 2: Simulation
