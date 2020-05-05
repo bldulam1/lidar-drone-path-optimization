@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+
 from lidar_point import LidarPoint
 
 
@@ -49,6 +50,10 @@ class LidarVector:
             intersection = np.linalg.solve(a, b)
 
         return LidarPoint(x=intersection[0], y=intersection[1])
+
+    def get_distance_from(self, point: LidarPoint) -> float:
+        a, b, c = self.get_abc()
+        return abs(a * point.x + b * point.y + c) / (a ** 2 + b ** 2) ** 0.5
 
     def __repr__(self):
         return "{} {:.4f}∠{:.2f}".format(self.start, self.distance, math.degrees(self.direction))
