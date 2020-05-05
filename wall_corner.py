@@ -26,3 +26,9 @@ class WallCorner:
 
     def __str__(self):
         return self.__repr__()
+
+    def __eq__(self, other):
+        return self.__repr__() == other.__repr__()
+
+    def __hash__(self):
+        return hash(self.__repr__())
