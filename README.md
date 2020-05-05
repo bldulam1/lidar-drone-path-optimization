@@ -97,12 +97,12 @@ The lidar point cloud is reconstructed from a CSV file with the following format
 
 ...
 
-| Scan ID, _i_             	| number of points, p       	|
+| Scan ID, _i_             	| number of points, _p_       	|
 |------------------------	|---------------------------	|
-| angle, θ<sub>0</sub>   	| distance, r<sub>0</sub>   	|
-| angle, θ<sub>1</sub>   	| distance, r<sub>1</sub>   	|
-| ...                    	| ...                       	|
-| angle, θ<sub>p-1</sub> 	| distance, r<sub>p-1</sub> 	|
+| angle, _θ<sub>0</sub>_  	| distance, _r<sub>0</sub>_   	|
+| angle, _θ<sub>1</sub>_  	| distance, _r<sub>1</sub>_   	|
+| ...                       | ...                       	|
+| angle, _θ<sub>p-1</sub>_ | distance, _r<sub>p-1</sub>_ 	|
 
 into a pandas DataFrame with x,y,i as the column headers.
 The lidar point cloud which is in polar coordinates (_r_, _θ_) is converted into its cartesian form (_x_, _y_).
