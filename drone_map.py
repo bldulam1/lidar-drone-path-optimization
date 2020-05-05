@@ -77,12 +77,10 @@ class DroneMap:
 
         return self.points
 
-    def get_all_corners(self):
+    def get_all_corners(self, div=100, min_pts=40, max_radius=1):
         if self.corners is None:
             df = self.get_all_points().copy()
-            div = 100
-            min_pts = 40
-            max_radius = 1
+
             df['x1'], df['y1'] = df.x // div, df.y // div
             can_cor_x, can_cor_y = [], []
 

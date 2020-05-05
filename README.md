@@ -78,16 +78,49 @@ The following shows the description of the command line arguments of the applica
 
 
 #### Explanation of the Solution
-##### Display
+##### Reconstructing the Lidar Point Cloud
+The lidar point cloud is reconstructed from a CSV file with the following format.
 
-```mermaid
-graph LR
-A[Hard edge] -->B(Round edge)
-    B --> C{Decision}
-    C -->|One| D[Result one]
-    C -->|Two| E[Result two]
-```
+| Scan ID, _0_             	| number of points, _n_       	|
+|------------------------	|---------------------------	|
+| angle, _θ<sub>0</sub>_  	| distance, _r<sub>0</sub>_   	|
+| angle, _θ<sub>1</sub>_  	| distance, _r<sub>1</sub>_   	|
+| ...                       | ...                       	|
+| angle, _θ<sub>n-1</sub>_ | distance, _r<sub>n-1</sub>_ 	|
 
+| Scan ID, _1_             	| number of points, _m_       	|
+|------------------------	|---------------------------	|
+| angle, _θ<sub>0</sub>_  	| distance, _r<sub>0</sub>_   	|
+| angle, _θ<sub>1</sub>_  	| distance, _r<sub>1</sub>_   	|
+| ...                       | ...                       	|
+| angle, _θ<sub>m-1</sub>_ | distance, _r<sub>m-1</sub>_ 	|
+
+...
+
+| Scan ID, _i_             	| number of points, p       	|
+|------------------------	|---------------------------	|
+| angle, θ<sub>0</sub>   	| distance, r<sub>0</sub>   	|
+| angle, θ<sub>1</sub>   	| distance, r<sub>1</sub>   	|
+| ...                    	| ...                       	|
+| angle, θ<sub>p-1</sub> 	| distance, r<sub>p-1</sub> 	|
+
+into a pandas DataFrame with x,y,i as the column headers.
+The lidar point cloud which is in polar coordinates (_r_, _θ_) is converted into its cartesian form (_x_, _y_).
+For this application the clockwise direction is considered the positive rotation.
+
+The calculation of this conversion is shown [here](./drone_map.py) (in the `def get_all_points(self)` section)
+
+##### Detecting Corners
+**Assumption:**
+The walls of the room are almost parallel with the x and y axes. In other words, the lidar point cloud is rotated such that its wall lines are almost perpendicular or horizontal.
+The following are steps in detecting corners
+1. Index the x and y series of the points DataFrame such that `x_index, y_index := x//factor, y//factor`
+2. Filter x_indices such that length of `points[points.x == point.x_index]` is greater than a threshold value.
+    The condition of the assumption is very important in this method.
+3. Filter y_indices such that length of `points[points.y == point.y_index]` is greater than a threshold value
+4. Match the filtered x and y indices, then check if there is a corner in an instance of the x_indices-y_indices pairing.
+
+The calculation for this is shown [here](./drone_map.py) (in the `def get_all_corners(self)` section)
 
 
 ## Package Dependencies
