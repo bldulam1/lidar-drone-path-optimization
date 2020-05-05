@@ -162,7 +162,7 @@ class DroneMap:
         if self.walls is None:
             half_div = div / 2
             df_points = self.get_all_points().copy()
-            walls = {}
+            walls = set()
             for _, corner in self.get_all_corners().iterrows():
                 corner = LidarPoint(corner.x, corner.y)
                 df = self.get_all_corners().copy()
@@ -224,18 +224,18 @@ class DroneMap:
 
                 wall_corner = WallCorner(cc=corner, cv=v_corner, ch=h_corner)
                 w = wall_corner.get_walls()
-                if w[0].__str__() not in walls:
-                    walls[w[0].__str__()] = w[0]
-                if w[1].__str__() not in walls:
-                    walls[w[1].__str__()] = w[1]
+                if w[0] not in walls:
+                    walls.add(w[0])
+                if w[1] not in walls:
+                    walls.add(w[1])
 
             x_start, y_start = [], []
             x_end, y_end = [], []
             for wl in walls:
-                x_start.append(walls[wl].start.x)
-                y_start.append(walls[wl].start.y)
-                x_end.append(walls[wl].end.x)
-                y_end.append(walls[wl].end.y)
+                x_start.append(wl.start.x)
+                y_start.append(wl.start.y)
+                x_end.append(wl.end.x)
+                y_end.append(wl.end.y)
 
             self.walls = pd.DataFrame(
                 data=list(zip(x_start, y_start, x_end, y_end)),
