@@ -123,6 +123,16 @@ The following are steps in detecting corners
 The calculation for this is shown [here](./drone_map.py) (in the `def get_all_corners(self)` section)
 
 
+##### Detecting Walls
+**Assumption:** Two walls share a common corner.
+
+The following are steps in detecting walls.
+1. Iterate each corner.
+2. Get points around the corner whose distance is within a threshold value. The threshold value is the minimum length of a wall.
+3. Based from the filtered points, identify whether the corner point is a `top corner`, `down corner`, `left corner`, or `right corner`
+4. Pair top_corner and bottom_corner, left_corner and right_corner from the corners set.
+5. The pair of corners will be the basis for forming a wall.
+
 ## Package Dependencies
 * [pandas](https://pandas.pydata.org/docs/)
 * [numpy](https://numpy.org/)
